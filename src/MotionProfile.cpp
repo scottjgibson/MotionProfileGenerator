@@ -1,37 +1,38 @@
 #include "MotionProfile.h"
 
-MotionProfile::MotionProfile(float aVelocityMax, float aAccelerationMax, short aMethod)
-		: maxVelocity(aVelocityMax), maxAcceleration(aAccelerationMax), method(aMethod)
-{
-	sampleTime = 0;
-	init();
-}
 
-MotionProfile::MotionProfile(float aVelocityMax, float aAccelerationMax, short aMethod, int aSampleTime)
-: maxVelocity(aVelocityMax), maxAcceleration(aAccelerationMax), method(aMethod), sampleTime(aSampleTime)
+MotionProfile::MotionProfile(float aVelocityMax, float aAccelerationMax, short aMethod, int aSampleTime, int aPwmVelocityPin)
 {
+	this->maxVelocity = aVelocityMax;
+	this->maxAcceleration = aAccelerationMax;
+	this->method = aMethod;
+	this->sampleTime = aSampleTime;
+	this->pwmVelocityPin = aPwmVelocityPin;
 	init();
 }
 
 void MotionProfile::init() {
 	// Check the method
-	if (0 > method || method > nrMethods - 1) {
+	if (0 > this->method || this->method > this->nrMethods - 1) {
 		// Set trapezoidal as default
-		method = 1;
+		this->method = 1;
 	}
 	
+	//Set the pwm pin to output
+	pinMode(this->pwmVelocityPin, OUTPUT);
+
 	// Time variables
-	lastTime = 0;
-	delta = 0;
+	this->lastTime = 0;
+	this->delta = 0;
 	
 	// State variables
 	reset();
 	
 	// Comparison precision
-	compFactor = 6;
+	this->compFactor = 6;
 	
 	// Misc
-	isFinished = false;
+	this->isFinished = false;
 }
 
 float MotionProfile::update(float setpoint) {

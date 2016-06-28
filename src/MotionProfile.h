@@ -1,10 +1,12 @@
 #ifndef __MOTIONPROFILE_H__
 #define __MOTIONPROFILE_H__
 
+#if 0
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
 #else
 #include "WProgram.h"
+#endif
 #endif
 
 /**
@@ -26,29 +28,23 @@
  * @version     1.0 
  * @since       2014-05-12
  */
-class MotionProfile {		
-	public:	
-		/**	
-		 * Constructor
-		 * 
-		 * @param int aVelocityMax maximum velocity
-		 * @param int aAccelerationMax maximum acceleration
-		 * @param short aMethod method of profile generation
-		 */
-		MotionProfile(float aVelocityMax, float aAccelerationMax, short aMethod);
+class MotionProfile {
+	public:
 		
-		/**	
+		/**
 		 * Constructor
-		 * 
+		 *
+		 * @param bool isSimulated Should the library update its own position
 		 * @param int aVelocityMax maximum velocity
 		 * @param int aAccelerationMax maximum acceleration
 		 * @param short aMethod method of profile generation
+		 * @param int aPwmVelocityPin pin for pwm ouptpu
 		 */
-		MotionProfile(float aVelocityMax, float aAccelerationMax, short aMethod, int aSampleTime);
+		MotionProfile(float aVelocityMax, float aAccelerationMax, short aMethod, int aSampleTime, int aPwmVelocityPin);
 		
 		void init();
 		
-		/**	
+		/**
 		 * Updates the state, generating new setpoints
 		 *
 		 * @param aSetpoint The current setpoint.
@@ -56,15 +52,17 @@ class MotionProfile {
 		float update(float aSetpoint);
 		
 		bool getFinished();
+		float getVelocity();
 		void setCompFactor(int aFactor);
 		void setMaxVelocity(float aMaxVelocity);
 		void setMaxAcceleration(float aMaxVelocity);
+		void setPosition(fload aPosition();
 		void pause();
 		void reset();
 	private:
-		/** 	
+		/**
 		 * Increments the state number.
-		 * 
+		 *
 		 * @see
 		  currentState
 		 */
@@ -86,10 +84,11 @@ class MotionProfile {
 		float acceleration;
 		
 		unsigned long lastTime;
-		float delta;	
+		float delta;
 		int sampleTime;
 		
 		int compFactor;
-		bool isFinished;	
+		bool isFinished;
+		bool isSimulation;
 };
 #endif
